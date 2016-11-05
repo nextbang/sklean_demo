@@ -2,14 +2,12 @@
 基于python的sklean包开发的机器学习算法demo
 
 ## 项目说明
----
 linear_regression_demo.py  一元线性回归模型demo
 
 multi_linear_regression_demo.py  多元线性回归模型demo
 
 
 ## 依赖说明
----
 import seaborn as sns # 绘图
 
 import matplotlib.pyplot as plot  # 绘图
