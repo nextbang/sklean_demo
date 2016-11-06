@@ -5,36 +5,9 @@
 @Date 2016-11-05
 '''
 
-import matplotlib.pyplot as plt
-import pandas as pd
 from sklearn import linear_model # 线性回归模型
 
-def get_data(file_name,x_field_name,y_field_name):
-    '''
-    Function for getting data
-    '''
-    data = pd.read_csv(file_name)  # here ,use pandas to read cvs file.  sep default ','
-    print data
-    X = []
-    Y = []
-    for single_square_feet, single_price_value in zip(data[x_field_name], data[y_field_name]):  # 遍历数据，
-        X.append([float(single_square_feet)])  # 存储在相应的list列表中
-        Y.append(float(single_price_value))
-    return X, Y
-
-
-def show_linear_plot(X,Y):
-    '''
-    Function for showing the resutls of linear fit model
-    '''
-    # Create linear regression object
-    regr = linear_model.LinearRegression()
-    regr.fit(X, Y)
-    plt.scatter(X,Y,color='blue')
-    plt.plot(X,regr.predict(X),color='red',linewidth=4)
-    plt.xticks(())
-    plt.yticks(())
-    plt.show()
+import sklearn_demo.util.regression_util as regr_util  # 数据导入、拆分、绘图等
 
 
 def train_linear_model(X,Y):  
@@ -48,20 +21,21 @@ def train_linear_model(X,Y):
     return regr
 
 
-def predict_value(regr,x_value):
-    '''
-    Function for predicting value
-    '''
-    predict_value = regr.predict(x_value)  
-    return predict_value
-
-
 if __name__ == '__main__':
-    X,Y = get_data('data/linear_regression.csv','housing_area','price')
-#    show_linear_plot(X,Y)
-    regr=train_linear_model(X,Y)
-    print predict_value(regr,90)
 
+    # 获取训练数据，并plot数据
+    x_field_names = 'housing_area'
+    y_field_name = 'price'
+    data,X,Y = regr_util.get_data('data/linear_regression.csv',x_field_names,y_field_name)
+    regr_util.show_linear_plot(data,x_field_names,y_field_name)
 
+    # 拆分训练数据和测试数据
+    X_train,X_test,Y_train,Y_test = regr_util.divide_train_test_data(X,Y)
+
+    # 训练模型，并预测
+    regr = train_linear_model(X_train.values.reshape(len(X_train),1),Y_train)
+    Y_predict = regr_util.predict_value(regr,X_test.values.reshape(len(X_test),1))
+    regr_util.predict_rmse(Y_predict,Y_test)
+    #regr_util.show_linear_roc(Y_predict,Y_test)  
 
 
